@@ -1,14 +1,27 @@
 import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import './Chat.css';
 import {Avatar, IconButton} from "@material-ui/core";
 import {AttachFile, InsertEmoticon, Mic, MoreVert, SearchOutlined} from "@material-ui/icons";
+import db from "../../services/firebase";
 
 function Chat() {
     const [input, setInput] = useState("");
     const [seed, setSeed] = useState(0);
+    const {roomId} = useParams();
+    const [roomName, setRoomName] = useState('');
+    useEffect(() => {
+        if (roomId){
+            db.collection('rooms')
+                .doc(roomId)
+                .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
+        };
+    }, [roomId]);
+
     useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000));
-    }, []);
+    }, [roomId]);
+
     const sendMessage = (e) => {
         e.preventDefault();
         console.log("you typed >>> ", input)
@@ -21,7 +34,7 @@ function Chat() {
             <div className="chat__header">
                 <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
                 <div className="chat__headerInfo">
-                    <h3>Room Name</h3>
+                    <h3>{roomName}</h3>
                     <p>last seen at...</p>
                 </div>
                 <div className="chat__headerRight">
@@ -48,7 +61,8 @@ function Chat() {
             <div className="chat__footer">
                 <InsertEmoticon/>
                 <form>
-                    <input value={input} onChange={(e) => setInput(e.target.value)} type="text" placeholder='Type a message'/>
+                    <input value={input} onChange={(e) => setInput(e.target.value)} type="text"
+                           placeholder='Type a message'/>
                     <button type='submit' onClick={sendMessage}>Send a message</button>
                 </form>
                 <Mic/>
