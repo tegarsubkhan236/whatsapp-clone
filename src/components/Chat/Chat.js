@@ -16,7 +16,7 @@ function Chat() {
     const [{user}, dispatch] = useStateValue();
 
     useEffect(() => {
-        if (roomId){
+        if (roomId) {
             db.collection('rooms')
                 .doc(roomId)
                 .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
@@ -42,8 +42,8 @@ function Chat() {
             .collection('messages')
             .add({
                 message: input,
-                name : user.displayName,
-                timestamp : firebase.firestore.FieldValue.serverTimestamp(),
+                name: user.displayName,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             })
         setInput('');
     }
@@ -58,8 +58,7 @@ function Chat() {
                     <p>
                         Last seen {" "}
                         {new Date(
-                            messages[messages.length - 1]?.
-                            timestamp?.toDate()
+                            messages[messages.length - 1]?.timestamp?.toDate()
                         ).toUTCString()}
                     </p>
                 </div>
